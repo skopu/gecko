@@ -40,19 +40,38 @@ module Gecko
       end
 
       def x_axis
-        { :labels => labels, :type => type }
+        if type
+          { :labels => labels, :type => type }
+        else
+          { :labels => labels }
+        end
       end
 
       def y_axis
-        { :format => format, :unit => unit }
+        if format && unit
+          { :format => format, :unit => unit }
+        elsif format
+          { :format => format }
+        elsif unit
+          { :unit => unit }
+        else
+          nil
+        end
       end
 
       def data_payload
-        {
-          :x_axis => x_axis,
-          :y_axis => y_axis,
-          :series => self.map{ |serie| self.serie_payload(serie) }
-        }
+        if format || unit
+          {
+            :x_axis => x_axis,
+            :y_axis => y_axis,
+            :series => self.map{ |serie| self.serie_payload(serie) }
+          }
+        else
+          {
+            :x_axis => x_axis,
+            :series => self.map{ |serie| self.serie_payload(serie) }
+          }
+        end
       end
 
       def serie_payload(serie)
