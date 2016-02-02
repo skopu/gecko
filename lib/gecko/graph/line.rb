@@ -40,10 +40,14 @@ module Gecko
       end
 
       def x_axis
-        if type
+        if type && labels
           { :labels => labels, :type => type }
-        else
+        elsif type
+          { :type => type }
+        elsif labels
           { :labels => labels }
+        else
+          nil
         end
       end
 
@@ -60,15 +64,25 @@ module Gecko
       end
 
       def data_payload
-        if format || unit
+        if y_axis && x_axis
           {
             :x_axis => x_axis,
             :y_axis => y_axis,
             :series => self.map{ |serie| self.serie_payload(serie) }
           }
-        else
+        elsif x_axis
           {
             :x_axis => x_axis,
+            :series => self.map{ |serie| self.serie_payload(serie) }
+          }
+        elsif y_axis
+          {
+            :y_axis => y_axis,
+            :series => self.map{ |serie| self.serie_payload(serie) }
+          }
+
+        else
+          {
             :series => self.map{ |serie| self.serie_payload(serie) }
           }
         end
